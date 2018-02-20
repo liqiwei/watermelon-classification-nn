@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <link rel="stylesheet" type="text/css" href="stuff.css">
+    <script src="https://rawgit.com/mattdiamond/Recorderjs/master/dist/recorder.js">
+    </script>
+        
+    
+    </head>
+    <body>
+       
+    <div class="wrap">
+         <script>
+ 
+    navigator.mediaDevices.getUserMedia({
+  audio: true
+})
+.then(stream => {
+  const aCtx = new AudioContext();
+  const streamSource = aCtx.createMediaStreamSource(stream);
+  var rec = new Recorder(streamSource);
+  rec.record();
+  setTimeout(() => {
+    stream.getTracks().forEach(t => t.stop());
+    rec.stop()
+    rec.exportWAV((blob) => {
+      // now we could send this blob with an FormData too
+      const url = URL.createObjectURL(blob);
+      let au = new Audio(url);
+      au.controls = true;
+      document.body.appendChild(au);
+      au.play();
+      let a = document.createElement('a');
+      a.href = url;
+      a.innerHTML = 'Download';
+      a.download = 'filename.wav';
+      document.body.appendChild(a);
+    });
+  }, 3000);
+})
+      
+    function postData(input) {
+    $.ajax({
+        type: "POST",
+        url: "/main.py",
+        data: { param: input },
+        success: callbackFunc
+    });
+}
+    function callbackFunc(response) {
+        console.log("something works");
+        console.log(response);
+}
+    postData('filename.wav');
+
+postData('data to process');
+        </script>
+        <h1> 
+            Watermelon Thump Test
+        </h1>
+        <h3>
+            Thump your watermelon and find out if it's ripe!
+        </h3>
+        
+        <div class="flex-container">
+           <img src="cute.png" width="400" height="320">
+        </div>
+    </div>
+    </body>
+
+</html>
